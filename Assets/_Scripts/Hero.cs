@@ -8,8 +8,22 @@ public class Hero : MonoBehaviour
     private float _speed = 30;
     private float rollMult = -45;
     private float pitchMult = 30;
-    private float shieldLevel = 1;
-    public float Shield => shieldLevel;
+   [SerializeField] private float _shieldLevel = 1;
+    private float gameRestartDelay = 1.5f;
+    [SerializeField] private GameObject _projectilePrefab;
+    private float projectileSpeed = 40;
+    public float Shield
+    {
+        get => _shieldLevel;
+        set
+        {
+            _shieldLevel = Mathf.Min(value, 4);
+            if (value < 0)
+                Destroy(this.gameObject);
+            spawnController._instance.DelayedRestart(gameRestartDelay);
+        }
+    }
+    private GameObject lastTriggerEnemy = null;
     private void Awake()
     {
         if (_instance == null)
@@ -30,5 +44,31 @@ public class Hero : MonoBehaviour
         pos.y += yAxis * _speed * Time.deltaTime;
         transform.position = pos;
         transform.rotation = Quaternion.Euler(yAxis * pitchMult, xAxis * rollMult, 0);
+        if (Input.GetKeyDown(KeyCode.Space))
+            TempFire();
+
+    }
+    private void TempFire()
+    {
+        GameObject projectGo = Instantiate<GameObject>(_projectilePrefab);
+        projectGo.transform.position = transform.position;
+        Rigidbody rigidB = projectGo.GetComponent<Rigidbody>();
+        rigidB.velocity = Vector3.up * projectileSpeed;
+    }
+    private void OnTriggerEnter(Collider other)
+    {
+        Transform rootT = other.gameObject.transform.root;
+        GameObject go = rootT.gameObject;
+        //print("triggered:" + go.name);
+        if(go==lastTriggerEnemy)
+         return;
+        lastTriggerEnemy = go;
+        if (go.tag == "Enemy")
+        {
+            Shield--;
+            Destroy(go);
+        }
+        else
+            print("it`s not Enemy");
     }
 }

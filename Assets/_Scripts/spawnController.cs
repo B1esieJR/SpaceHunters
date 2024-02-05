@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using UnityEngine.SceneManagement;
 public class spawnController : MonoBehaviour
 {
 
@@ -34,14 +34,16 @@ public class spawnController : MonoBehaviour
         go.transform.position = pos;
 
         Invoke("SpawnEnemy", 1f / enemySpawnPerSecond);
-
-
     }
-   
-    
 
-    void Update()
+    public void DelayedRestart(float spawnHeroDelay)
     {
-        
+        Invoke("Restart", spawnHeroDelay);
     }
+    public void Restart()
+    {
+        SceneManager.LoadScene("SampleScene");
+    }
+
+   
 }
