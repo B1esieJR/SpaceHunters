@@ -31,12 +31,14 @@ public class BoundsCheck : MonoBehaviour
             pos.x = cameraWidth - radius;
             isOnScreen = false;
             offRight = true;
+            print("rght");
         }
         if (pos.x < -cameraWidth + radius)
         {
             pos.x = -cameraWidth + radius;
             isOnScreen = false;
             offLeft = true;
+            print("lft");
         }
         if (pos.y > cameraHeight - radius)
         {

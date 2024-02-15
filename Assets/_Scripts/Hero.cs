@@ -19,8 +19,11 @@ public class Hero : MonoBehaviour
         {
             _shieldLevel = Mathf.Min(value, 4);
             if (value < 0)
+            {
                 Destroy(this.gameObject);
-            spawnController._instance.DelayedRestart(gameRestartDelay);
+                spawnController._instance.DelayedRestart(gameRestartDelay);
+            }
+            
         }
     }
     private GameObject lastTriggerEnemy = null;
@@ -66,6 +69,7 @@ public class Hero : MonoBehaviour
         if (go.tag == "Enemy")
         {
             Shield--;
+            print(Shield);
             Destroy(go);
         }
         else

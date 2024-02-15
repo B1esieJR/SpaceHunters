@@ -4,12 +4,12 @@ using UnityEngine;
 
 public class Enemy : MonoBehaviour
 {
-    protected float _speed = 10f;
+    protected float _speed = 15f;
     protected float fireRate = 0.3f;
     protected float health = 10;
     private float boundsoffset=-2.5f;
     protected int score = 100;
-    private BoundsCheck bndCheck;
+    protected BoundsCheck bndCheck;
     public Vector3 enemyPos
     {
         get=>this.transform.position;
@@ -19,25 +19,11 @@ public class Enemy : MonoBehaviour
     {
         boundsoffset = GetComponent<BoundsCheck>().offsetRadius=-2.5f;
         bndCheck = GetComponent<BoundsCheck>();
-      
-
-       
     }
-    void Update()
+   private void Update()
     {
         Move();
-        if (bndCheck != null && !bndCheck.offDown)
-           
-            if (enemyPos.y < -bndCheck.cameraHeight + bndCheck.offsetRadius)
-            {
-                Destroy(gameObject);
-            }
-    }
-    public virtual void Move()
-    {
-        Vector3 tempPos = enemyPos;
-        tempPos.y -= _speed * Time.deltaTime;
-        enemyPos = tempPos;
+      
     }
     private void OnCollisionEnter(Collision collision)
     {
@@ -49,5 +35,17 @@ public class Enemy : MonoBehaviour
         }
         else
             print("hh");
+    }
+    public virtual void Move()
+    {
+        Vector3 tempPos = enemyPos;
+        tempPos.y -= _speed * Time.deltaTime;
+        enemyPos = tempPos;
+        if (bndCheck != null && !bndCheck.offDown)
+
+            if (enemyPos.y < -bndCheck.cameraHeight + bndCheck.offsetRadius)
+            {
+                Destroy(gameObject);
+            }
     }
 }
