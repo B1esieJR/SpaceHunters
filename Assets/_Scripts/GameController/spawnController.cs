@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -9,13 +8,19 @@ public class spawnController : MonoBehaviour
     [SerializeField] private GameObject[] prefabEnemies;
     private float enemySpawnPerSecond = 0.5f;
     private float enemyDefualtPadding = 1f;
+    static Dictionary<WeaponType, WeaponDefinition> WEAP_DICT;
     private BoundsCheck bndcheck;
-
+    [SerializeField] private WeaponDefinition[] weaponDefinitions;
     private void Awake()
     {
         _instance = this;
         bndcheck = GetComponent<BoundsCheck>();
         Invoke("SpawnEnemy", 1f / enemySpawnPerSecond);
+        WEAP_DICT = new Dictionary<WeaponType, WeaponDefinition>();
+        foreach (WeaponDefinition def in weaponDefinitions)
+        {
+           WEAP_DICT[def.type] = def;
+        }
     }
     private void SpawnEnemy()
     {
@@ -43,6 +48,12 @@ public class spawnController : MonoBehaviour
     public void Restart()
     {
         SceneManager.LoadScene("SampleScene");
+    }
+    static public WeaponDefinition GetWeaponDefinition(WeaponType weaponType)
+    {
+        if (WEAP_DICT.ContainsKey(weaponType))
+            return WEAP_DICT[weaponType];
+        return new WeaponDefinition();
     }
 
    

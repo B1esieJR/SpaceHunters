@@ -1,7 +1,4 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-
 public class Enemy_1 : Enemy
 {
    [SerializeField] private float waveFrequence = 2f;
@@ -10,16 +7,13 @@ public class Enemy_1 : Enemy
     private float startXpos;
     private float birthTime;
     
+    
    private void Start()
     {
         startXpos = enemyPos.x;
         birthTime = Time.time;
     }
 
-    private void Update()
-    {
-        Move();
-    }
     public override sealed void Move()
     {
         Vector3 tempPos = enemyPos;

@@ -1,10 +1,8 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class BoundsCheck : MonoBehaviour
 {
-    private float radius = 4f;
+   [SerializeField] private float radius = 4f;
     public float cameraWidth;
     public float cameraHeight;
     public bool keepOnScreen = true;
@@ -31,14 +29,12 @@ public class BoundsCheck : MonoBehaviour
             pos.x = cameraWidth - radius;
             isOnScreen = false;
             offRight = true;
-            print("rght");
         }
         if (pos.x < -cameraWidth + radius)
         {
             pos.x = -cameraWidth + radius;
             isOnScreen = false;
             offLeft = true;
-            print("lft");
         }
         if (pos.y > cameraHeight - radius)
         {

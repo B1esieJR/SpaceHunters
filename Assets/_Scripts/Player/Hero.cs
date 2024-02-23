@@ -1,17 +1,18 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-
 public class Hero : MonoBehaviour
 {
-    static public Hero _instance;
+    [SerializeField] private float _shieldLevel = 1;
+    [SerializeField] private GameObject _projectilePrefab;
     private float _speed = 30;
+    private GameObject lastTriggerEnemy = null;
     private float rollMult = -45;
     private float pitchMult = 30;
-   [SerializeField] private float _shieldLevel = 1;
     private float gameRestartDelay = 1.5f;
-    [SerializeField] private GameObject _projectilePrefab;
     private float projectileSpeed = 40;
+    [SerializeField] private Weapon[] weapons;
+    static public Hero _instance;
+    public delegate void WeaponFireDelegate();
+    public WeaponFireDelegate fireDelegate;
     public float Shield
     {
         get => _shieldLevel;
@@ -22,11 +23,9 @@ public class Hero : MonoBehaviour
             {
                 Destroy(this.gameObject);
                 spawnController._instance.DelayedRestart(gameRestartDelay);
-            }
-            
+            }  
         }
     }
-    private GameObject lastTriggerEnemy = null;
     private void Awake()
     {
         if (_instance == null)
@@ -47,8 +46,8 @@ public class Hero : MonoBehaviour
         pos.y += yAxis * _speed * Time.deltaTime;
         transform.position = pos;
         transform.rotation = Quaternion.Euler(yAxis * pitchMult, xAxis * rollMult, 0);
-        if (Input.GetKeyDown(KeyCode.Space))
-            TempFire();
+        if (Input.GetAxis("Jump") == 1 && fireDelegate != null)
+            fireDelegate();
 
     }
     private void TempFire()
@@ -56,7 +55,10 @@ public class Hero : MonoBehaviour
         GameObject projectGo = Instantiate<GameObject>(_projectilePrefab);
         projectGo.transform.position = transform.position;
         Rigidbody rigidB = projectGo.GetComponent<Rigidbody>();
-        rigidB.velocity = Vector3.up * projectileSpeed;
+        Projectile proj = projectGo.GetComponent<Projectile>();
+        proj.type = WeaponType.blaster;
+        float tSpeed = spawnController.GetWeaponDefinition(proj.type).velocity;
+        rigidB.velocity = Vector3.up * tSpeed;
     }
     private void OnTriggerEnter(Collider other)
     {
@@ -72,7 +74,41 @@ public class Hero : MonoBehaviour
             print(Shield);
             Destroy(go);
         }
+        else if (go.tag == "PowerUp")
+        {
+            AbsorbPowerUp(go);
+        }
         else
-            print("it`s not Enemy");
+        {
+            print("Triggered by non-Enemy:" + go.name);
+        }
+    }
+    private void AbsorbPowerUp(GameObject go)
+    {
+        PowerUp power = go.GetComponent<PowerUp>();
+        switch (power._type)
+        {
+            
+        }
+        power.AbsorbedBy(this.gameObject);
+    }
+    private Weapon GetEmptyWeaponSlot()
+    {
+        for (var i = 0; i < weapons.Length; i++)
+        {
+            if (weapons[i].type == WeaponType.none)
+            {
+                return weapons[i];
+            }
+
+        }
+        return null;
+    }
+    private void ClearWeapons()
+    {
+        foreach (Weapon w in weapons)
+        {
+            w.SetType(WeaponType.none);
+        }
     }
 }
